@@ -1,1 +1,61 @@
-<p>post-list works!</p>
+<div class="row">
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="display-4">
+        <i class="fas fa-newspaper me-3"></i>Blog Posts
+      </h1>
+      <a routerLink="/new-post" class="btn btn-success">
+        <i class="fas fa-plus me-2"></i>Nuovo Post
+      </a>
+    </div>
+
+    <div class="row" *ngIf="posts.length > 0; else noPosts">
+      <div class="col-md-6 col-lg-4 mb-4" *ngFor="let post of posts">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-2">
+              <span class="badge bg-info">{{ post.category }}</span>
+            </div>
+            
+            <h5 class="card-title">{{ post.title }}</h5>
+            
+            <p class="card-text text-muted flex-grow-1">
+              {{ getExcerpt(post.content) }}
+            </p>
+            
+            <div class="card-footer bg-transparent border-0 px-0 pb-0">
+              <small class="text-muted d-block mb-2">
+                <i class="fas fa-user me-1"></i>{{ post.author }}
+                <i class="fas fa-calendar ms-3 me-1"></i>{{ formatDate(post.date) }}
+              </small>
+              
+              <div class="btn-group w-100">
+                <a [routerLink]="['/post', post.id]" class="btn btn-primary btn-sm">
+                  <i class="fas fa-eye me-1"></i>Leggi
+                </a>
+                <a [routerLink]="['/edit-post', post.id]" class="btn btn-outline-secondary btn-sm">
+                  <i class="fas fa-edit me-1"></i>Modifica
+                </a>
+                <button (click)="deletePost(post.id)" class="btn btn-outline-danger btn-sm"
+                        (click)="$event.stopPropagation()">
+                  <i class="fas fa-trash me-1"></i>Elimina
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noPosts>
+      <div class="text-center py-5">
+        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+        <h3>Nessun post disponibile</h3>
+        <p class="text-muted">Inizia creando il tuo primo post!</p>
+        <a routerLink="/new-post" class="btn btn-primary">
+          <i class="fas fa-plus me-2"></i>Crea il primo post
+        </a>
+      </div>
+    </ng-template>
+  </div>
+</div>
