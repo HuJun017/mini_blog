@@ -1,1 +1,57 @@
-/* You can add global styles to this file, and also import other style files */
+/* Bootstrap è già incluso via angular.json */
+
+/* Stili personalizzati */
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+  border: none;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.post-content {
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+.btn {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.form-control, .form-select {
+  border-radius: 0.5rem;
+  border: 2px solid #e9ecef;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.badge {
+  font-size: 0.8em;
+  font-weight: 500;
+}
+
+footer {
+  margin-top: auto;
+}
