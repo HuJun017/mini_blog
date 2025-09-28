@@ -9,7 +9,148 @@
       </a>
     </div>
 
+    <!-- Barra di Ricerca -->
+    <div class="card mb-4 border-info">
+      <div class="card-header bg-info text-white">
+        <h6 class="mb-0">
+          <i class="fas fa-search me-2"></i>
+          Cerca Post
+        </h6>
+      </div>
+      
+      <div class="card-body">
+        <!-- Toggle modalità ricerca -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">
+              <i class="fas fa-filter me-1"></i>Modalità di ricerca:
+            </label>
+            <div class="btn-group w-100" role="group">
+              <input 
+                type="radio" 
+                class="btn-check" 
+                name="searchMode" 
+                id="searchKeyword" 
+                [(ngModel)]="searchMode" 
+                value="keyword"
+                (change)="onSearchModeChange()">
+              <label class="btn btn-outline-primary" for="searchKeyword">
+                <i class="fas fa-font me-1"></i>Parola Chiave
+              </label>
+
+              <input 
+                type="radio" 
+                class="btn-check" 
+                name="searchMode" 
+                id="searchId" 
+                [(ngModel)]="searchMode" 
+                value="id"
+                (change)="onSearchModeChange()">
+              <label class="btn btn-outline-primary" for="searchId">
+                <i class="fas fa-hashtag me-1"></i>ID Post
+              </label>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              <i class="fas fa-layer-group me-1"></i>Filtro categoria:
+            </label>
+            <select 
+              class="form-select" 
+              [(ngModel)]="selectedCategory"
+              (change)="onCategoryChange()">
+              <option value="">Tutte le categorie</option>
+              <option *ngFor="let category of availableCategories" [value]="category">
+                {{ category }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Campo di ricerca -->
+        <div class="row">
+          <div class="col-md-8">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-search"></i>
+              </span>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="searchTerm"
+                (input)="onSearch()"
+                [placeholder]="getSearchPlaceholder()"
+                #searchInput>
+              <button 
+                class="btn btn-outline-secondary" 
+                type="button" 
+                (click)="clearSearch()"
+                [disabled]="!searchTerm">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <!-- Suggerimenti per parole chiave -->
+            <div class="form-text" *ngIf="searchMode === 'keyword'">
+              <i class="fas fa-lightbulb me-1"></i>
+              <strong>Suggerimenti:</strong> Angular, TypeScript, Bootstrap, Testing, RxJS, Design
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <!-- Spazio vuoto per mantenere il layout -->
+          </div>
+        </div>
+
+        <!-- Risultati ricerca -->
+        <div class="mt-3" *ngIf="isSearchActive">
+          <div class="alert alert-info d-flex justify-content-between align-items-center" *ngIf="searchResults.length > 0">
+            <div>
+              <i class="fas fa-check-circle me-2"></i>
+              <strong>{{ searchResults.length }}</strong> risultato/i trovato/i 
+              <span *ngIf="searchMode === 'keyword'">per "<strong>{{ searchTerm }}</strong>"</span>
+              <span *ngIf="searchMode === 'id'">con ID <strong>{{ searchTerm }}</strong></span>
+              <span *ngIf="selectedCategory"> nella categoria "<strong>{{ selectedCategory }}</strong>"</span>
+            </div>
+            
+            <button class="btn btn-outline-info btn-sm" (click)="clearSearch()">
+              <i class="fas fa-times me-1"></i>Pulisci
+            </button>
+          </div>
+          
+          <div class="alert alert-warning" *ngIf="searchResults.length === 0">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Nessun risultato trovato</strong>
+            <span *ngIf="searchMode === 'keyword'"> per la parola chiave "<strong>{{ searchTerm }}</strong>"</span>
+            <span *ngIf="searchMode === 'id'"> con ID <strong>{{ searchTerm }}</strong></span>
+            <span *ngIf="selectedCategory"> nella categoria "<strong>{{ selectedCategory }}</strong>"</span>
+            
+            <div class="mt-2">
+              <small>
+                <i class="fas fa-info-circle me-1"></i>
+                Prova con: 
+                <span *ngIf="searchMode === 'keyword'">parole diverse, controlla l'ortografia, o usa termini più generici</span>
+                <span *ngIf="searchMode === 'id'">un ID esistente ({{ availableIds.join(', ') }})</span>
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista Post -->
     <div class="row" *ngIf="posts.length > 0; else noPosts">
+      <!-- Header risultati (solo se è attiva una ricerca) -->
+      <div class="col-12" *ngIf="isSearchActive && searchResults.length > 0">
+        <div class="alert alert-success mb-3">
+          <i class="fas fa-search me-2"></i>
+          <strong>Risultati trovati:</strong> {{ searchResults.length }} post
+          <span *ngIf="searchMode === 'keyword'"> per "<strong>{{ searchTerm }}</strong>"</span>
+          <span *ngIf="searchMode === 'id'"> con ID <strong>{{ searchTerm }}</strong></span>
+        </div>
+      </div>
+
       <div class="col-md-6 col-lg-4 mb-4" *ngFor="let post of posts">
         <div class="card h-100 shadow-sm">
           <div class="card-body d-flex flex-column">
@@ -49,12 +190,33 @@
 
     <ng-template #noPosts>
       <div class="text-center py-5">
-        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-        <h3>Nessun post disponibile</h3>
-        <p class="text-muted">Inizia creando il tuo primo post!</p>
-        <a routerLink="/new-post" class="btn btn-primary">
-          <i class="fas fa-plus me-2"></i>Crea il primo post
-        </a>
+        <div *ngIf="!isSearchActive">
+          <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+          <h3>Nessun post disponibile</h3>
+          <p class="text-muted">Inizia creando il tuo primo post!</p>
+          <a routerLink="/new-post" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Crea il primo post
+          </a>
+        </div>
+        
+        <div *ngIf="isSearchActive">
+          <i class="fas fa-search fa-3x text-warning mb-3"></i>
+          <h3>Nessun risultato trovato</h3>
+          <p class="text-muted">
+            La ricerca 
+            <span *ngIf="searchMode === 'keyword'">per "<strong>{{ searchTerm }}</strong>"</span>
+            <span *ngIf="searchMode === 'id'">per ID <strong>{{ searchTerm }}</strong></span>
+            non ha prodotto risultati.
+          </p>
+          <div class="d-flex gap-2 justify-content-center">
+            <button (click)="clearSearch()" class="btn btn-primary">
+              <i class="fas fa-list me-2"></i>Mostra tutti i post
+            </button>
+            <a routerLink="/new-post" class="btn btn-success">
+              <i class="fas fa-plus me-2"></i>Crea nuovo post
+            </a>
+          </div>
+        </div>
       </div>
     </ng-template>
   </div>
